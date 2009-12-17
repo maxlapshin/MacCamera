@@ -1,0 +1,9 @@
+build
+*.pyc
+.sconf_temp/*
+.sconsign.dblite
+config.log
+.DS_Store
+prophylaxis.mp4
+profilaktika_1500.mp4
+
