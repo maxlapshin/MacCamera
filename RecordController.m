@@ -67,6 +67,9 @@
 
 - (IBAction)cameraSelected:(id)sender
 {
+	if (!sender)
+		return;
+
 	QTCaptureDevice *device;
 	for (device in [self cameras]) {
 		if ([[sender title] isEqualTo:[device description]])
