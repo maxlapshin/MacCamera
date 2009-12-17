@@ -11,13 +11,21 @@
 
 @implementation RecordController
 
+- (NSArray *)cameras
+{
+	NSMutableArray *ret = [NSMutableArray array];
+	[ret addObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo]];
+	[ret addObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
+	return ret;
+}
+
 - (void)awakeFromNib
 {
-	NSArray *cams = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
 	[camerasList_ removeAllItems];
-	for (id<NSObject> o in cams)
+	for (id<NSObject> o in [self cameras])
 		[camerasList_ addItemWithTitle:[o description]];
 	captureSession_ = [[QTCaptureSession alloc] init];
+	[self cameraSelected:[camerasList_ selectedItem]];
 }
 
 - (IBAction)startRecording:(id)sender
@@ -39,6 +47,9 @@
 	   fromConnection:(QTCaptureConnection *)connection
 {
 	NSLog(@"%d:%d (%d)", CVPixelBufferGetWidth(videoFrame), CVPixelBufferGetHeight(videoFrame), CVPixelBufferGetBytesPerRow(videoFrame));
+	if (CVPixelBufferIsPlanar(videoFrame)) {
+		return;
+	}
 	static int d = 0;
 	d += 1;
 	if (250 == d) {
@@ -53,9 +64,8 @@
 
 - (IBAction)cameraSelected:(id)sender
 {
-	NSArray *cams = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
 	QTCaptureDevice *device;
-	for (device in cams) {
+	for (device in [self cameras]) {
 		if ([[sender title] isEqualTo:[device description]])
 			break;
 	}
