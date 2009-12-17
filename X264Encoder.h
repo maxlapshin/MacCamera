@@ -7,6 +7,7 @@
 //
 
 #include <x264.h>
+#import <QTKit/QTKit.h>
 
 @interface X264Encoder : NSObject
 {
@@ -38,8 +39,7 @@
  Возвращает NO когда не сохранённых данных больше не осталось. */
 - (BOOL)flushedAllDelayedFramesTo:(NSMutableData *)buffer;
 
-/** Копирует данные из AVFrame во внутренний кадр. */
-- (void)consumeAVFrame:(void *)frame;
+- (void)consumeCVImage:(CVImageBufferRef)image;
 
 /** Устанавливает уровень (level_idc) */
 - (void)setLevel:(int)level;

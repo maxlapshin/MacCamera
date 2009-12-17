@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <QTKit/QTKit.h>
+#import "X264Encoder.h"
 
 @interface RecordController : NSObject {
 	IBOutlet QTCaptureView	*captureView_;
@@ -15,6 +16,9 @@
 	QTCaptureSession		*captureSession_;
 	QTCaptureDeviceInput	*captureDeviceInput_;
 	QTCaptureDecompressedVideoOutput	*videoOutput_;
+	X264Encoder            *videoEncoder_;
+	NSFileHandle           *fileOutput_;
+	NSMutableData          *frameOutput_;
 }
 
 - (IBAction)startRecording:(id)sender;

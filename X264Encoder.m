@@ -27,7 +27,7 @@ extern int x264_encoder_delayed_frames(x264_t *);
 		x264_picture_clean(pic_);
 
 	pic_ = &picture_;
-	if (x264_picture_alloc(pic_, X264_CSP_I420, width, height) < 0) {
+	if (x264_picture_alloc(pic_, X264_CSP_YUYV, width, height) < 0) {
 		[errors_ appendFormat:@"Failed to allocate %fx%f picture\n",
 		 width, height];
 		pic_ = NULL;
@@ -115,21 +115,27 @@ extern int x264_encoder_delayed_frames(x264_t *);
 	encoder_ = NULL;
 }
 
-- (void)consumeAVFrame:(void *)frame
+- (void)consumeCVImage:(CVImageBufferRef)image
 {
-	struct avframe { uint8_t *data[4]; int linesize[4]; };
-	struct avframe *f = (struct avframe *)frame;
-
-	int i;
-	for (i = 0; i < 4; i++) {
-		if (!externalFrame_) {
-			savedPlane_[i] = picture_.img.plane[i];
-			savedStride_[i] = picture_.img.i_stride[i];
-		}
-		picture_.img.plane[i] = f->data[i];
-		picture_.img.i_stride[i] = f->linesize[i];
+	if (!CVPixelBufferIsPlanar(image)) {
+		CVPixelBufferLockBaseAddress(image, 0);
+		void *rasterData = CVPixelBufferGetBaseAddress(image);
+		CVPixelBufferUnlockBaseAddress(image, 0);		
+		NSLog(@"Not planar!!");
+		return;
 	}
-	externalFrame_ = YES;
+	NSLog(@"Planar");
+	
+//	int i;
+//	for (i = 0; i < 4; i++) {
+//		if (!externalFrame_) {
+//			savedPlane_[i] = picture_.img.plane[i];
+//			savedStride_[i] = picture_.img.i_stride[i];
+//		}
+//		picture_.img.plane[i] = f->data[i];
+//		picture_.img.i_stride[i] = f->linesize[i];
+//	}
+//	externalFrame_ = YES;
 }
 
 - (void)dealloc

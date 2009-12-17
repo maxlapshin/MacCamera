@@ -21,6 +21,10 @@
 
 - (void)awakeFromNib
 {
+	videoEncoder_ = [[X264Encoder alloc] init];
+	fileOutput_ = [NSFileHandle fileHandleForWritingAtPath:@"out.264"];
+	frameOutput_ = [NSMutableData data];
+
 	[camerasList_ removeAllItems];
 	for (id<NSObject> o in [self cameras])
 		[camerasList_ addItemWithTitle:[o description]];
@@ -46,10 +50,9 @@
 	 withSampleBuffer:(QTSampleBuffer *)sampleBuffer
 	   fromConnection:(QTCaptureConnection *)connection
 {
+	[videoEncoder_ consumeCVImage:videoFrame];
+	//[videoEncoder_ encodeTo:frameOutput_];
 	NSLog(@"%d:%d (%d)", CVPixelBufferGetWidth(videoFrame), CVPixelBufferGetHeight(videoFrame), CVPixelBufferGetBytesPerRow(videoFrame));
-	if (CVPixelBufferIsPlanar(videoFrame)) {
-		return;
-	}
 	static int d = 0;
 	d += 1;
 	if (250 == d) {
