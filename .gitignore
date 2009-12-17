@@ -1,9 +1,12 @@
-build
-*.pyc
-.sconf_temp/*
-.sconsign.dblite
-config.log
 .DS_Store
-prophylaxis.mp4
-profilaktika_1500.mp4
+*.swp
+*~.nib
 
+build/
+
+*.pbxuser
+*.perspective
+*.perspectivev3
+
+*.mode1v3
+*.mode2v3
