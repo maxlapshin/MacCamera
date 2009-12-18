@@ -26,6 +26,9 @@
 	uint8_t			*savedPlane_[4];
 	int				savedStride_[4];
 
+	uint8_t			*frameBuffer_;
+	
+
 	NSMutableString	*errors_;
 }
 

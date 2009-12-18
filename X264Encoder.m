@@ -27,7 +27,7 @@ extern int x264_encoder_delayed_frames(x264_t *);
 		x264_picture_clean(pic_);
 
 	pic_ = &picture_;
-	if (x264_picture_alloc(pic_, X264_CSP_YUYV, width, height) < 0) {
+	if (x264_picture_alloc(pic_, X264_CSP_I420/*X264_CSP_YUYV*/, width, height) < 0) {
 		[errors_ appendFormat:@"Failed to allocate %fx%f picture\n",
 		 width, height];
 		pic_ = NULL;
@@ -98,6 +98,7 @@ extern int x264_encoder_delayed_frames(x264_t *);
 	parameters_.i_width = width_;
 	parameters_.i_height = height_;
 	parameters_.i_sps_id = 1; // TODO надо бы настраиваемым штоле сделать?
+//	parameters_.i_csp = X264_CSP_I422;
 
 	[self setupParams];
 
@@ -117,24 +118,33 @@ extern int x264_encoder_delayed_frames(x264_t *);
 
 - (void)consumeCVImage:(CVImageBufferRef)image
 {
-	if (!CVPixelBufferIsPlanar(image)) {
-		CVPixelBufferLockBaseAddress(image, 0);
-		void *rasterData = CVPixelBufferGetBaseAddress(image);
-		CVPixelBufferUnlockBaseAddress(image, 0);		
-		NSLog(@"Not planar!!");
+	OSType fmt = CVPixelBufferGetPixelFormatType(image); // unsigned long
+	if (fmt != kComponentVideoUnsigned) { // "yuvs"
+		char buf[5] = {0, 0, 0, 0, 0};
+		memcpy(buf, &fmt, 4);
+		NSLog(@"Pixel format '%s' is unsupported by %@", buf, self);
 		return;
 	}
-	NSLog(@"Planar");
-	
-//	int i;
-//	for (i = 0; i < 4; i++) {
-//		if (!externalFrame_) {
-//			savedPlane_[i] = picture_.img.plane[i];
-//			savedStride_[i] = picture_.img.i_stride[i];
-//		}
-//		picture_.img.plane[i] = f->data[i];
-//		picture_.img.i_stride[i] = f->linesize[i];
-//	}
+
+	if (CVPixelBufferIsPlanar(image)) {
+		NSLog(@"Planar images are not supported by %@", self);
+		return;
+	}
+
+	CVPixelBufferLockBaseAddress(image, 0); {
+		uint8_t *buffer = CVPixelBufferGetBaseAddress(image);
+		size_t size = CVPixelBufferGetDataSize(image);
+		if (!frameBuffer_)
+			frameBuffer_ = malloc(size);
+		memcpy(frameBuffer_, buffer, size);
+		picture_.img.plane[0] = frameBuffer_;
+		picture_.img.i_stride[0] = CVPixelBufferGetBytesPerRow(image);
+		picture_.img.plane[1] = frameBuffer_;
+		picture_.img.i_stride[1] = CVPixelBufferGetBytesPerRow(image);
+		picture_.img.plane[2] = frameBuffer_;
+		picture_.img.i_stride[2] = CVPixelBufferGetBytesPerRow(image);
+	} CVPixelBufferUnlockBaseAddress(image, 0);
+
 //	externalFrame_ = YES;
 }
 
@@ -165,7 +175,7 @@ extern int x264_encoder_delayed_frames(x264_t *);
 	picture_.i_pts = (int64_t)frameNo_ * parameters_.i_fps_den;
 	picture_.i_type = X264_TYPE_AUTO;
 	picture_.i_qpplus1 = 0;
-
+	NSLog(@"lol?");
 	if (x264_encoder_encode(encoder_, &nals, &nalsCount, pic_, &output) < 0) {
 		NSLog(@"x264_encoder_encode failed");
         return;

@@ -19,6 +19,8 @@
 	X264Encoder            *videoEncoder_;
 	NSFileHandle           *fileOutput_;
 	NSMutableData          *frameOutput_;
+	int						framesCountDown_;
+	int						secondsCount_;
 }
 
 - (IBAction)startRecording:(id)sender;
