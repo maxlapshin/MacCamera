@@ -46,4 +46,8 @@
 
 /** Устанавливает уровень (level_idc) */
 - (void)setLevel:(int)level;
+
+- (void)start;
+
+- (void)stop;
 @end

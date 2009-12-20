@@ -21,6 +21,8 @@
 	NSMutableData          *frameOutput_;
 	int						framesCountDown_;
 	int						secondsCount_;
+	double					width_;
+	double					height_;
 }
 
 - (IBAction)startRecording:(id)sender;

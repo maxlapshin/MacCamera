@@ -34,7 +34,7 @@
 	[self cameraSelected:[camerasList_ selectedItem]];
 }
 
-- (IBAction)startRecording:(id)sender
+- (void)setupFramer
 {
 	videoOutput_ = [[QTCaptureDecompressedVideoOutput alloc] init];
 	[videoOutput_ setDelegate:self];
@@ -44,9 +44,20 @@
 		[[NSAlert alertWithError:error] runModal];
 		return;
 	}
-	[videoEncoder_ setWidth:1280 height:1024];
+	
+	[videoOutput_ setPixelBufferAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+												[NSNumber numberWithDouble:width_], (id)kCVPixelBufferWidthKey,
+												[NSNumber numberWithDouble:height_], (id)kCVPixelBufferHeightKey,
+							//					[NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8Planar], (id)kCVPixelBufferPixelFormatTypeKey,
+												nil]];	
+}
+
+- (IBAction)startRecording:(id)sender
+{
+	[self setupFramer];
+	[videoEncoder_ setWidth:width_ height:height_];
 	[videoEncoder_ start];
-	framesCountDown_ = 25;
+	framesCountDown_ = 15 * 60;
 	secondsCount_ = 0;
 	[captureSession_ startRunning];
 }
@@ -61,7 +72,7 @@
 	[videoEncoder_ encodeTo:frameOutput_];
 	framesCountDown_ -= 1;
 	if (framesCountDown_ == 0) {
-		framesCountDown_ = 25;
+		framesCountDown_ = 15 * 60;
 		while (![videoEncoder_ flushedAllDelayedFramesTo:frameOutput_]);
 		[frameOutput_ writeToFile:[NSString stringWithFormat:@"/private/tmp/test%05d.h264", secondsCount_] atomically:NO];
 		secondsCount_ += 1;
@@ -86,6 +97,10 @@
 		if ([[sender title] isEqualTo:[device description]])
 			break;
 	}
+//	TODO get dimensions
+	width_ = 320;
+	height_ = 240;
+
 	NSError *err;
 	if (![device open:&err]) {
 		NSLog(@"Could not open device: %@", err);

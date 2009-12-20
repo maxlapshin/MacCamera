@@ -118,6 +118,7 @@ extern int x264_encoder_delayed_frames(x264_t *);
 
 - (void)consumeCVImage:(CVImageBufferRef)image
 {
+	// TODO CGColorSpace maybe?
 	OSType fmt = CVPixelBufferGetPixelFormatType(image); // unsigned long
 	if (fmt != kComponentVideoUnsigned) { // "yuvs"
 		char buf[5] = {0, 0, 0, 0, 0};
@@ -134,15 +135,32 @@ extern int x264_encoder_delayed_frames(x264_t *);
 	CVPixelBufferLockBaseAddress(image, 0); {
 		uint8_t *buffer = CVPixelBufferGetBaseAddress(image);
 		size_t size = CVPixelBufferGetDataSize(image);
-		if (!frameBuffer_)
-			frameBuffer_ = malloc(size);
-		memcpy(frameBuffer_, buffer, size);
-		picture_.img.plane[0] = frameBuffer_;
-		picture_.img.i_stride[0] = CVPixelBufferGetBytesPerRow(image);
-		picture_.img.plane[1] = frameBuffer_;
-		picture_.img.i_stride[1] = CVPixelBufferGetBytesPerRow(image);
-		picture_.img.plane[2] = frameBuffer_;
-		picture_.img.i_stride[2] = CVPixelBufferGetBytesPerRow(image);
+		size_t bpr = CVPixelBufferGetBytesPerRow(image);
+		size_t width = CVPixelBufferGetWidth(image);
+		size_t height = CVPixelBufferGetHeight(image);
+
+		if (!savedPlane_[0])
+			savedPlane_[0] = malloc(width * height);
+		if (!savedPlane_[1])
+			savedPlane_[1] = malloc(width * height / 2);
+		if (!savedPlane_[2])
+			savedPlane_[2] = malloc(width * height / 2);
+
+		memset(savedPlane_[1], 127, width * height / 2);
+		memset(savedPlane_[2], 127, width * height / 2);
+		// copy Y (soooooo slooooooow)
+		int x, y;
+		for (y = 0; y < height; y++)
+			for(x = 0; x < width; x++) {
+				savedPlane_[0][x + y * width] = buffer[x * 2 + y * bpr];
+			}
+
+		picture_.img.plane[0] = savedPlane_[0];
+		picture_.img.i_stride[0] = width;
+		picture_.img.plane[1] = savedPlane_[1];
+		picture_.img.i_stride[1] = width / 2;
+		picture_.img.plane[2] = savedPlane_[2];
+		picture_.img.i_stride[2] = width / 2;
 	} CVPixelBufferUnlockBaseAddress(image, 0);
 
 //	externalFrame_ = YES;
