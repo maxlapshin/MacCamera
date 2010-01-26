@@ -10,6 +10,7 @@
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		232DA47110C5105E00976134 /* RecordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 232DA47010C5105E00976134 /* RecordController.m */; };
 		232DA49510C514A600976134 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 232DA49410C514A600976134 /* QTKit.framework */; };
+		234F0017110F073700F62D51 /* UYVY422ToYUV420P.m in Sources */ = {isa = PBXBuildFile; fileRef = 234F0016110F073700F62D51 /* UYVY422ToYUV420P.m */; };
 		50FDDD0210DA5C76008DC3A1 /* X264Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FDDD0110DA5C76008DC3A1 /* X264Encoder.m */; };
 		574A8DF710D5CE2D00C8C041 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574A8DF610D5CE2D00C8C041 /* CoreVideo.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -25,6 +26,8 @@
 		232DA46F10C5105E00976134 /* RecordController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordController.h; sourceTree = "<group>"; };
 		232DA47010C5105E00976134 /* RecordController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordController.m; sourceTree = "<group>"; };
 		232DA49410C514A600976134 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		234F0015110F073700F62D51 /* UYVY422ToYUV420P.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UYVY422ToYUV420P.h; sourceTree = "<group>"; };
+		234F0016110F073700F62D51 /* UYVY422ToYUV420P.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UYVY422ToYUV420P.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -53,6 +56,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				234F0015110F073700F62D51 /* UYVY422ToYUV420P.h */,
+				234F0016110F073700F62D51 /* UYVY422ToYUV420P.m */,
 				50FDDD0010DA5C76008DC3A1 /* X264Encoder.h */,
 				50FDDD0110DA5C76008DC3A1 /* X264Encoder.m */,
 				232DA46F10C5105E00976134 /* RecordController.h */,
@@ -187,6 +192,7 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				232DA47110C5105E00976134 /* RecordController.m in Sources */,
 				50FDDD0210DA5C76008DC3A1 /* X264Encoder.m in Sources */,
+				234F0017110F073700F62D51 /* UYVY422ToYUV420P.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
