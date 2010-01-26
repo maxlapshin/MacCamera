@@ -7,10 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#include <libswscale/swscale.h>
 
 
 @interface UYVY422ToYUV420P : NSObject {
-
+	struct SwsContext *converter_;
+	uint8_t *picture_[3];
+	int pictureStride_[3];
 }
 
 @end
