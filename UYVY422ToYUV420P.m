@@ -13,15 +13,16 @@
 @implementation UYVY422ToYUV420P
 - (id)init
 {
-	int width, height;
+//	int width, height;
 	if ((self = [super init])) {
-		converter_ = sws_getContext(width, height, PIX_FMT_UYVY422,
-									width, height, PIX_FMT_YUV420P,
-									2, NULL, NULL, NULL);
-		if (!converter_) {
-			[self release];
-			return nil;
-		}
+//		TODO initWithFrame:
+//		converter_ = sws_getContext(width, height, PIX_FMT_UYVY422,
+//									width, height, PIX_FMT_YUV420P,
+//									2, NULL, NULL, NULL);
+//		if (!converter_) {
+//			[self release];
+//			return nil;
+//		}
 	}
 
 	return self;
@@ -47,6 +48,28 @@
 		size_t bpr = CVPixelBufferGetBytesPerRow(image);
 		size_t width = CVPixelBufferGetWidth(image);
 		size_t height = CVPixelBufferGetHeight(image);
+
+		if (frameSize_ != bpr * height) {
+			frameSize_ = bpr * height;
+			int i;
+			for (i = 0; i < 3; i++) {
+				if (picture_[i])
+					free(picture_[i]);
+
+				if (i == 0) {
+					picture_[i] = malloc(frameSize_);
+					pictureStride_[i] = width;
+				} else {
+					picture_[i] = malloc(frameSize_/2);
+					pictureStride_[i] = width / 2;
+				}
+			}
+		}
+
+		converter_ = sws_getCachedContext(converter_,
+									width, height, PIX_FMT_UYVY422,
+									width, height, PIX_FMT_YUV420P,
+									2, NULL, NULL, NULL);
 
         uint8_t *src[3] = {(uint8_t *)buffer, NULL, NULL};
         int srcStride[3] = {bpr, 0, 0};

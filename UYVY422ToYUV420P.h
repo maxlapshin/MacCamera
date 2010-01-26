@@ -14,6 +14,7 @@
 	struct SwsContext *converter_;
 	uint8_t *picture_[3];
 	int pictureStride_[3];
+	uint64_t frameSize_;
 }
 
 @end
